@@ -5,7 +5,6 @@ import re
 from collections import defaultdict, deque, namedtuple
 
 import cv2
-import matplotlib.pyplot as plt  # Ensure matplotlib is imported
 import numpy as np
 from tqdm import tqdm
 
@@ -38,22 +37,6 @@ RADAR_SENSOR_MAPPING = {
 }
 
 RadarData = namedtuple("RadarData", ["msg", "sensor_type"])
-
-
-def plot_sample(radar_grid, bounding_box):
-    fig, axs = plt.subplots(1, 2, figsize=(10, 5))
-    radar_y, radar_x = list(zip(np.nonzero(np.any(radar_grid != 0, axis=2))))
-    axs[0].scatter(radar_x, radar_y, s=10, alpha=0.5)
-    axs[0].set_aspect("equal")  # Make radar plot square
-    axs[0].set_title("Radar Grid")
-
-    # axs[1].pcolor(bounding_box)
-    axs[1].set_aspect("equal")  # Make instance plot square
-    axs[1].set_title("Instance Grid")
-
-    plt.tight_layout()
-    plt.show()
-    fig.savefig("radar_grid.png")
 
 
 def main():
@@ -139,23 +122,26 @@ def main():
                 # (1,4,2) -> (8)
                 bounding_box = preprocess_output(msg, synced_opponent_odoms)
 
-                bb_distances = np.sqrt(np.sum(np.square(bounding_box), axis=-1))
-                print(bb_distances)
+                bb_distances = np.sqrt(
+                    np.sum(np.square(bounding_box), axis=-1)
+                ).reshape(-1)
 
-                # if not empty -- change!
-                if not np.sum(bounding_box):
+                # 150 to allow for some zero samples
+                if np.any(bb_distances > 150):
                     continue
 
                 bounding_box_str = ""
-                for coordinate in bounding_box.ravel():
-                    bounding_box_str += f"{coordinate} "
-                bounding_box_str += "0 0"
+                for bounding_box in bounding_box:
+                    for coordinate in bounding_box.ravel():
+                        bounding_box_str += f"{coordinate} "
+                    bounding_box_str += "0 0\n"
 
                 radar_grid = preprocess_input(msg, radar_window)
+
                 # Convert to image format
                 radar_grid = (radar_grid * 255.0).astype(np.uint8)
                 cv2.imwrite(f"{IMG_SAVE_PATH}/{label_num}.png", radar_grid)
-                # bounding box array to text
+
                 with open(f"{LABEL_SAVE_PATH}/{label_num}.txt", "w") as f:
                     f.write(bounding_box_str)
                 label_num += 1
