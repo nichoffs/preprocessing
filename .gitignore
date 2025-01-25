@@ -1,0 +1,6 @@
+**/log/
+*.png
+**/build/
+**/install/
+**/__pycache__/
+
