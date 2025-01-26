@@ -3,8 +3,6 @@ from math import atan2, cos, sin
 import numpy as np
 
 # Constants
-GRID_SIZE = 200
-METER_RANGE = 200  # Total range in meters (both X and Y axes)
 LENGTH = 4.91  # Length of the vehicle in meters
 WIDTH = 1.905  # Width of the vehicle in meters
 
