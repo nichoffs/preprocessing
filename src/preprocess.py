@@ -20,8 +20,6 @@ LABEL_SAVE_PATH = "/mnt/sdc-wdc/radar_net_dataset/labels"
 WINDOW_DURATION = 0.2
 OPPONENT_SYNC_THRESHOLD = 0.05
 
-BOUNDING_BOX_MAX = 150
-
 # don't want exist_ok to be True
 os.mkdir(IMG_SAVE_PATH)
 os.mkdir(LABEL_SAVE_PATH)
@@ -131,13 +129,15 @@ def main():
                 if np.any(bb_distances < 100):
                     bounding_box_str = "0 "
                     for bounding_box in bounding_box:
-                        for coordinate in bounding_box.ravel() / BOUNDING_BOX_MAX:
+                        for coordinate in bounding_box.ravel():
                             bounding_box_str += f"{coordinate} "
+                    print(bb_distances)
                 elif np.any(bb_distances < 150):  # allow for some zero labels
                     bounding_box_str = "1 "
                     for bounding_box in bounding_box:
-                        for coordinate in bounding_box.ravel() / BOUNDING_BOX_MAX:
+                        for coordinate in bounding_box.ravel():
                             bounding_box_str += f"{coordinate} "
+                    print(bb_distances)
                 else:
                     continue
 
