@@ -39,6 +39,24 @@ RADAR_SENSOR_MAPPING = {
 RadarData = namedtuple("RadarData", ["msg", "sensor_type"])
 
 
+def normalize_corners_to_yolo_obb(corners, grid_size=800, meter_range=200):
+    # First shift coordinates from ego-relative to grid coordinates
+    # Move origin from center to bottom-left by adding meter_range/2
+    corners_shifted = corners + meter_range / 2
+
+    # Convert from meters to grid coordinates (0 to grid_size)
+    pixel_resolution = meter_range / grid_size
+    corners_pixels = corners_shifted / pixel_resolution
+
+    # Normalize to 0-1 range by dividing by grid size
+    corners_normalized = corners_pixels / grid_size
+
+    # Clip values to ensure they're in [0, 1]
+    corners_normalized = np.clip(corners_normalized, 0, 1)
+
+    return corners_normalized
+
+
 def main():
     # Initialize the RosBagReader with the specified topics
     reader = RosBagReader(MCAP_DIR, TOPIC_NAMES)
@@ -119,28 +137,26 @@ def main():
                         break  # Older messages are out of threshold
 
             if radar_window and synced_opponent_odoms:
-                # (1,4,2) -> (8)
                 bounding_box = preprocess_output(msg, synced_opponent_odoms)
 
+                # Calculate distances using the meter coordinates
                 bb_distances = np.sqrt(
                     np.sum(np.square(bounding_box), axis=-1)
                 ).reshape(-1)
 
                 if np.any(bb_distances < 100):
-                    bounding_box_str = "0 "
-                    for bounding_box in bounding_box:
-                        for coordinate in bounding_box.ravel():
-                            bounding_box_str += f"{coordinate} "
-                    print(bb_distances)
-                elif np.any(bb_distances < 150):  # allow for some zero labels
-                    bounding_box_str = "1 "
-                    for bounding_box in bounding_box:
-                        for coordinate in bounding_box.ravel():
-                            bounding_box_str += f"{coordinate} "
-                    print(bb_distances)
+                    # Normalize to YOLO OBB format for saving
+                    normalized_box = normalize_corners_to_yolo_obb(bounding_box)
+                    bounding_box_str = (
+                        f"0 {' '.join(map(str, normalized_box.reshape(-1)))}"
+                    )
+                elif np.any(bb_distances < 150):
+                    normalized_box = normalize_corners_to_yolo_obb(bounding_box)
+                    bounding_box_str = (
+                        f"1 {' '.join(map(str, normalized_box.reshape(-1)))}"
+                    )
                 else:
                     continue
-
                 radar_grid = preprocess_input(msg, radar_window)
 
                 # Convert to image format
