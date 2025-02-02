@@ -52,7 +52,7 @@ def normalize_corners_to_yolo_obb(corners, grid_size=800, meter_range=200):
     corners_normalized = corners_pixels / grid_size
 
     # Clip values to ensure they're in [0, 1]
-    corners_normalized = np.clip(corners_normalized, 0, 1)
+    # corners_normalized = np.clip(corners_normalized, 0, 1)
 
     return corners_normalized
 
@@ -144,16 +144,15 @@ def main():
                     np.sum(np.square(bounding_box), axis=-1)
                 ).reshape(-1)
 
-                if np.any(bb_distances < 100):
+                if (
+                    np.any(bb_distances < 100)
+                    and np.any(bounding_box >= 0.0)
+                    and np.any(bounding_box <= 1.0)
+                ):
                     # Normalize to YOLO OBB format for saving
                     normalized_box = normalize_corners_to_yolo_obb(bounding_box)
                     bounding_box_str = (
                         f"0 {' '.join(map(str, normalized_box.reshape(-1)))}"
-                    )
-                elif np.any(bb_distances < 150):
-                    normalized_box = normalize_corners_to_yolo_obb(bounding_box)
-                    bounding_box_str = (
-                        f"1 {' '.join(map(str, normalized_box.reshape(-1)))}"
                     )
                 else:
                     continue
