@@ -144,16 +144,15 @@ def main():
                     np.sum(np.square(bounding_box), axis=-1)
                 ).reshape(-1)
 
-                if (
-                    np.any(bb_distances < 100)
-                    and np.any(bounding_box >= 0.0)
-                    and np.any(bounding_box <= 1.0)
-                ):
+                if np.any(bb_distances < 100):
                     # Normalize to YOLO OBB format for saving
                     normalized_box = normalize_corners_to_yolo_obb(bounding_box)
-                    bounding_box_str = (
-                        f"0 {' '.join(map(str, normalized_box.reshape(-1)))}"
-                    )
+                    if np.all((normalized_box >= 0.0) & (normalized_box <= 1.0)):
+                        bounding_box_str = (
+                            f"0 {' '.join(map(str, normalized_box.reshape(-1)))}"
+                        )
+                    else:
+                        continue
                 else:
                     continue
                 radar_grid = preprocess_input(msg, radar_window)
