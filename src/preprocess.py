@@ -21,8 +21,8 @@ WINDOW_DURATION = 0.2
 OPPONENT_SYNC_THRESHOLD = 0.05
 
 # don't want exist_ok to be True
-os.mkdir(IMG_SAVE_PATH)
-os.mkdir(LABEL_SAVE_PATH)
+os.makedirs(IMG_SAVE_PATH)
+os.makedirs(LABEL_SAVE_PATH)
 
 TOPIC_NAMES = [
     "/vehicle/uva_odometry",

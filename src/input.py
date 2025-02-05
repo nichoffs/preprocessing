@@ -104,7 +104,7 @@ def map_points_to_grid(normalized_detections, grid_size=800, meter_range=200):
         # Update all feature channels (including timestamp) with running average
         current_count = count_grid[x_idx, y_idx]
         if current_count == 0:
-            grid[x_idx, y_idx] = valid_features[i]
+            grid[y_idx, x_idx] = valid_features[i]
         else:
             # Compute running average for all features including timestamp
             grid[x_idx, y_idx] = (
