@@ -1,15 +1,23 @@
 # reader.py
 
-import rosbag2_py
 from typing import List
+
+import rosbag2_py
 from rclpy.serialization import deserialize_message
 from rosidl_runtime_py.utilities import get_message as get_message_type
 
+
 class RosBagReader:
-    def __init__(self, input_bag: str, topic_names: List[str], storage_id: str = "mcap"):
+    def __init__(
+        self,
+        input_bag: str,
+        topic_names: List[str],
+        storage_id: str = "mcap",
+        start_offset: int = 0,
+    ):
         """
         Initializes the RosBagReader.
-        
+
         Args:
             input_bag: Path to the ROS bag file.
             topic_names: List of topic names to read.
@@ -31,13 +39,13 @@ class RosBagReader:
     def topic_name2type(self, topic_name: str) -> str:
         """
         Maps a topic name to its message type.
-        
+
         Args:
             topic_name: Name of the ROS topic.
-        
+
         Returns:
             The message type as a string.
-        
+
         Raises:
             ValueError: If the topic is not found in the bag.
         """
@@ -49,7 +57,7 @@ class RosBagReader:
     def read_messages(self):
         """
         Generator that yields messages from the ROS bag.
-        
+
         Yields:
             Tuple of (topic, message, timestamp).
         """

@@ -14,9 +14,11 @@ from reader import RosBagReader
 from utils import timestamp_to_sec
 
 # Constants
-MCAP_DIR = "/mnt/sdc-wdc/bags/uva_tum_8_4.mcap"
-IMG_SAVE_PATH = "/mnt/sdc-wdc/radar_net_dataset/images"
-LABEL_SAVE_PATH = "/mnt/sdc-wdc/radar_net_dataset/labels"
+MCAP_DIR = "/mnt/sdc-wdc/bags/trimmed_filtered_no_lidar.mcap"
+# IMG_SAVE_PATH = "/mnt/sdc-wdc/radar_net_dataset/images"
+# LABEL_SAVE_PATH = "/mnt/sdc-wdc/radar_net_dataset/labels"
+IMG_SAVE_PATH = "/mnt/sdc-wdc/four_car_dataset/images"
+LABEL_SAVE_PATH = "/mnt/sdc-wdc/four_car_dataset/labels"
 WINDOW_DURATION = 0.2
 OPPONENT_SYNC_THRESHOLD = 0.05
 
@@ -27,7 +29,8 @@ os.makedirs(LABEL_SAVE_PATH)
 TOPIC_NAMES = [
     "/vehicle/uva_odometry",
     "/vehicle_3/odometry",
-    "/radar_rear/ars548_process/detections",
+    "/opponent/tracks",
+    # "/radar_rear/ars548_process/detections",
     "/radar_front/ars548_process/detections",
 ]
 
@@ -71,7 +74,7 @@ def main():
 
     label_num = 0
     # Iterate through all messages in the ROS bag
-    for topic, msg, timestamp in tqdm(reader.read_messages(), total=217741):
+    for topic, msg, timestamp in tqdm(reader.read_messages(), total=542907):
         if reader.msgs_read == 1:
             first_timestamp = timestamp * 1e-9
 
@@ -110,6 +113,12 @@ def main():
             # Remove the vehicle entry if queue is empty
             if not odom_queue:
                 del opponent_odoms[vehicle_id]
+
+        elif "tracks" in topic:
+            print(msg)
+            from sys import exit
+
+            exit(0)
 
         elif "/vehicle/uva_odometry" in topic:
             ego_time = timestamp_sec

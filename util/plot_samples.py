@@ -87,7 +87,6 @@ def draw_ground_truth_boxes(image, label_path):
                 continue
 
             pts = (bbox * GRID_SIZE).astype(np.int32)
-            print(f"{pts=}")
             image = cv2.polylines(
                 image, [pts], isClosed=True, color=(0, 255, 0), thickness=1
             )
