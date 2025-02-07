@@ -1,0 +1,47 @@
+std_msgs/Header header
+
+uint8 sw_version_major
+uint8 sw_version_minor
+uint8 sw_version_patch
+uint8 data_qualifier
+
+uint32 timestamp_nanosec
+uint32 timestamp_sec
+
+uint16 reserved_1
+uint16 meas_time_duration
+uint32 cycle_start_time
+uint64 cycle_counter
+uint8 sensor_time_sync
+uint8 temperature_reporting
+uint8 sensor_temperature_status
+uint8 status_supply_voltage
+uint8 sensor_defect_recognised
+uint8 sensor_defect_reason
+uint32 hwswfw_versions
+
+uint8[26] sensor_part_number
+
+uint8 sensor_status
+uint8 modulation_mode
+
+uint16 min_range_amb_domain
+uint16 max_range_amb_domain
+uint16 min_vel_amb_domain
+uint16 max_vel_amb_domain
+uint16 min_az_amb_domain
+uint16 max_az_amb_domain
+uint8 min_el_amb_domain
+uint8 max_el_amb_domain
+
+uint16 max_nr_detections
+uint16 valid_detections
+uint32 current_maximum_sensor_range
+uint32 minimum_sensor_range
+
+uint8 max_range_influenced_by_large_peak
+uint8 extra_dist_influenced_by_large_peak
+
+uint16 azimuth_misalignment
+uint16 elevation_misalignment
+uint16 reserved_2

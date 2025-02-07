@@ -1,0 +1,5 @@
+uva_iac_msgs/Polynomial new_poly
+bool[] new_coef_mask
+---
+bool success
+string message

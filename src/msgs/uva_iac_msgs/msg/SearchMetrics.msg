@@ -1,0 +1,11 @@
+float64 final_edge_cost
+float64 computation_time
+int32 nodes_expanded
+int32 edges_expanded
+int32 initial_edges_generated
+int32 initial_frontier_size
+bool used_mpc_acc
+bool final_path_collision
+bool const_path_seg_collision
+bool search_succeeded
+bool goal_condition_reached
