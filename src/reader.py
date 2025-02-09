@@ -37,30 +37,12 @@ class RosBagReader:
         self.msgs_read = 0
 
     def topic_name2type(self, topic_name: str) -> str:
-        """
-        Maps a topic name to its message type.
-
-        Args:
-            topic_name: Name of the ROS topic.
-
-        Returns:
-            The message type as a string.
-
-        Raises:
-            ValueError: If the topic is not found in the bag.
-        """
         for topic_type in self.topic_types:
             if topic_type.name == topic_name:
                 return topic_type.type
         raise ValueError(f"Topic {topic_name} not found in the bag.")
 
     def read_messages(self):
-        """
-        Generator that yields messages from the ROS bag.
-
-        Yields:
-            Tuple of (topic, message, timestamp).
-        """
         while self.reader.has_next():
             topic, data, timestamp = self.reader.read_next()
             msg_type = get_message_type(self.topic_name2type(topic))
@@ -69,7 +51,4 @@ class RosBagReader:
             yield topic, msg, timestamp
 
     def __del__(self):
-        """
-        Ensures the reader is properly closed.
-        """
         del self.reader
